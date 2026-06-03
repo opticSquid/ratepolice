@@ -1,5 +1,7 @@
 # RatePolice
 
+![Logo](./Logo.png)
+
 ## Project Vision
 
 Build a stable, lightweight, idiomatic Go rate limiter middleware package that works seamlessly with the Go standard library and can evolve over time to support multiple algorithms, storage backends, cooldown strategies, and advanced production use cases.
