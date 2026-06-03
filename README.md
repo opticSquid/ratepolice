@@ -1,4 +1,4 @@
-# Go Police
+# RatePolice
 
 ## Project Vision
 
