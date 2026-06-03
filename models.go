@@ -34,6 +34,8 @@ type Config struct {
 
 type RateLimiter struct {
 	data            map[string][]time.Time
+	algoritm        Algorithm
+	backend         Backend
 	allowedRequests int64
 	keyFunc         func(args ...any) string
 	timeWindow      time.Duration
@@ -51,6 +53,14 @@ type ResponseHeaders struct {
 	XRatelimitRemaining int64         `json:"X-RateLimit-Remaining"`
 	XRatelimitReset     time.Time     `json:"X-RateLimit-Reset"`
 	RetryAfter          time.Duration `json:"Retry-After"`
+}
+
+// RFC 9457 compliant ProblemDetails Object
+type ProblemDetails struct {
+	Type     string `json:"type,omitempty"`
+	Title    string `json:"title"`
+	Detail   string `json:"detail"`
+	Instance string `json:"instance,omitempty"`
 }
 
 type RatePolice interface {
