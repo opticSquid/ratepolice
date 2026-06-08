@@ -1,4 +1,4 @@
-package ratepolice
+package shared
 
 func isAlgoValid(algo Algorithm) bool {
 	switch algo {
@@ -9,6 +9,6 @@ func isAlgoValid(algo Algorithm) bool {
 	}
 }
 
-func isValidConfig(cfg Config) bool {
-	return isAlgoValid(cfg.Algoritm)
+func IsValidConfig(cfg Config) bool {
+	return isAlgoValid(cfg.Algorithm)
 }
