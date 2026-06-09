@@ -25,14 +25,22 @@ const (
 )
 
 type Config struct {
+	//Maximum number of allowed requests per client with in the time window
 	MaxAllowedRequests int64
-	KeyFunc            func(*http.Request) string
-	TimeWindow         time.Duration
-	CoolDownDur        time.Duration
+	// The function to uniquely identify a client given a request
+	KeyFunc func(*http.Request) string
+	// The time window for rate limiting
+	TimeWindow time.Duration
+	// The duration of the cool down period after a blocked request
+	CoolDownDur time.Duration
+	// The multiplier for the cool down period after a blocked request
 	CoolDownMultiplier int
-	Backend            Backend
-	Algorithm          Algorithm
-	RedisConn          string
+	// The backend to be used to store data
+	Backend Backend
+	// The algorithm to be used for rate limiting
+	Algorithm Algorithm
+	// The Redis connection string to be used for storing data in case you are using Redis as the backend
+	RedisConn string
 }
 
 type Verdict string
