@@ -2,6 +2,7 @@ package inmemory
 
 import (
 	"errors"
+	"net/http"
 	"time"
 
 	"github.com/opticSquid/ratepolice/shared"
@@ -11,6 +12,9 @@ func (cfg *InMemoryRateLimiter) fixedWindowCounter(clientId string) (shared.Resp
 	if rqCount, ok := cfg.data[clientId]; ok {
 		if rqCount > cfg.maxAllowedRequests {
 			return shared.ResponseHeaders{
+				Type:                 "Rate Limit Exceeded",
+				Title:                http.StatusText(http.StatusTooManyRequests),
+				Detail:               "Rate limit has been exceeded",
 				XRatelimitLimit:      shared.Blocked,
 				XRatelimitRemaining:  0,
 				XRatelimitReset:      cfg.windowEnd,

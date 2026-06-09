@@ -40,7 +40,7 @@ func (cfg *InMemoryRateLimiter) Limit(next http.Handler) http.Handler {
 		response, err := cfg.algoSwitcher(w, r)
 		if err != nil {
 			w.Header().Set("Content-Type", "application/json")
-			w.WriteHeader(http.StatusNotImplemented)
+			w.WriteHeader(http.StatusTooManyRequests)
 			_ = json.NewEncoder(w).Encode(response)
 			return
 		}
