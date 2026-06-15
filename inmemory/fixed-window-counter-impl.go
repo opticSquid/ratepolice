@@ -18,19 +18,21 @@ func (cfg *InMemoryRateLimiter) getOrCreate(clientId string) int64 {
 
 func (cfg *InMemoryRateLimiter) fixedWindowCounter(clientId string) (shared.ResponseHeaders, error) {
 	rqCount := cfg.getOrCreate(clientId)
-	if cfg.maxAllowedRequests != 0 && rqCount > cfg.maxAllowedRequests {
+	if cfg.maxAllowedRequests == 0 || rqCount >= cfg.maxAllowedRequests {
 		return shared.ResponseHeaders{
-			XRatelimitLimit:     shared.Allowed,
-			XRatelimitRemaining: cfg.maxAllowedRequests - rqCount,
+			XRatelimitLimit:     shared.Blocked,
+			XRatelimitRemaining: 0,
 			XRatelimitReset:     cfg.windowEnd,
 		}, nil
 	}
+
+	remaining := cfg.maxAllowedRequests - rqCount
 	cfg.mu.Lock()
 	cfg.data[clientId] = rqCount + 1
 	cfg.mu.Unlock()
 	return shared.ResponseHeaders{
 		XRatelimitLimit:     shared.Allowed,
-		XRatelimitRemaining: cfg.maxAllowedRequests - 1,
+		XRatelimitRemaining: remaining,
 		XRatelimitReset:     cfg.windowEnd,
 	}, nil
 }
