@@ -71,7 +71,7 @@ func randomJitter() {
 	time.Sleep(time.Duration(5+rand.Intn(25)) * time.Millisecond)
 }
 
-func Test_InMemoryRateLimiter_Multiple_Clients_Within_Limit_Mixed(t *testing.T) {
+func Test_InMemoryRateLimiter_Multiple_Clients_Within_Limit_Mixed_Sequence(t *testing.T) {
 	inmemoryRl := NewInMemoryRateLimiter(config)
 
 	clients := []string{
@@ -115,7 +115,7 @@ func Test_InMemoryRateLimiter_Multiple_Clients_Within_Limit_Mixed(t *testing.T) 
 	wg.Wait()
 }
 
-func Test_InMemoryRateLimiter_Multiple_Clients_Exceeding_Limit_Mixed(t *testing.T) {
+func Test_InMemoryRateLimiter_Multiple_Clients_Exceeding_Limit_Mixed_Sequence(t *testing.T) {
 	inmemoryRl := NewInMemoryRateLimiter(config)
 
 	clients := []string{
