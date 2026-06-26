@@ -6,13 +6,15 @@ import (
 	"github.com/opticSquid/ratepolice/shared"
 )
 
+var fixedWindowCounterData = make(map[string]int64)
+
 func (cfg *InMemoryRateLimiter) getOrCreate(clientId string) int64 {
 	cfg.mu.Lock() // Allows Concurrent Reads
 	defer cfg.mu.Unlock()
-	if rqCount, ok := cfg.data[clientId]; ok {
+	if rqCount, ok := fixedWindowCounterData[clientId]; ok {
 		return rqCount
 	}
-	cfg.data[clientId] = 0
+	fixedWindowCounterData[clientId] = 0
 	return 0
 }
 
@@ -28,7 +30,7 @@ func (cfg *InMemoryRateLimiter) fixedWindowCounter(clientId string) (shared.Resp
 
 	remaining := cfg.maxAllowedRequests - rqCount
 	cfg.mu.Lock()
-	cfg.data[clientId] = rqCount + 1
+	fixedWindowCounterData[clientId] = rqCount + 1
 	cfg.mu.Unlock()
 	return shared.ResponseHeaders{
 		XRatelimitLimit:     shared.Allowed,
@@ -42,8 +44,8 @@ func (cfg *InMemoryRateLimiter) fixedWindowPurge() {
 	cfg.windowEnd = curTime.Add(cfg.timeWindow)
 	cfg.mu.Lock()
 	defer cfg.mu.Unlock()
-	for i := range cfg.data {
-		cfg.data[i] = 0
+	for i := range fixedWindowCounterData {
+		fixedWindowCounterData[i] = 0
 	}
 }
 func (cfg *InMemoryRateLimiter) fixedWindowCleanup() {

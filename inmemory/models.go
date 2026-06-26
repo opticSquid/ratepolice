@@ -21,5 +21,4 @@ type InMemoryRateLimiter struct {
 	windowEnd          time.Time
 	ctx                context.Context
 	cnclFunc           context.CancelFunc
-	data               map[string]int64
 }

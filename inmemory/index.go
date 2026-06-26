@@ -23,7 +23,6 @@ func NewInMemoryRateLimiter(cfg shared.Config) *InMemoryRateLimiter {
 		windowEnd:          curTime.Add(cfg.TimeWindow),
 		ctx:                ctx,
 		cnclFunc:           cncl,
-		data:               make(map[string]int64),
 	}
 	if rl.timeWindow > 0 {
 		switch rl.algorithm {
@@ -36,7 +35,6 @@ func NewInMemoryRateLimiter(cfg shared.Config) *InMemoryRateLimiter {
 
 func (cfg *InMemoryRateLimiter) Limit(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		//TODO: Ratelimiting process in memory
 		response, err := cfg.algoSwitcher(w, r)
 		if err != nil {
 			w.Header().Set("Content-Type", "application/json")
