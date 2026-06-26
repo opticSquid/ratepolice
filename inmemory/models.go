@@ -22,4 +22,5 @@ type InMemoryRateLimiter struct {
 	ctx                    context.Context
 	cnclFunc               context.CancelFunc
 	fixedWindowCounterData map[string]int
+	slidingWindowData      map[string][]time.Time
 }

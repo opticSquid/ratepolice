@@ -3,7 +3,9 @@ package inmemory
 import (
 	"context"
 	"encoding/json"
+	"log"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/opticSquid/ratepolice/shared"
@@ -91,7 +93,8 @@ func (rl *InMemoryRateLimiter) Limit(next http.Handler) http.Handler {
 			writeResponse(w, http.StatusTooManyRequests, respH, respB)
 			return
 		}
-		// handing over to next middleware
+
+		setRateLimitHeaders(w, respH)
 		next.ServeHTTP(w, r)
 	})
 }
