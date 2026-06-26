@@ -6,53 +6,49 @@ import (
 	"github.com/opticSquid/ratepolice/shared"
 )
 
-func (cfg *InMemoryRateLimiter) getOrCreateClientFixedWindowCounter(clientId string) int {
-	cfg.mu.Lock() // Allows Concurrent Reads
-	defer cfg.mu.Unlock()
-	if rqCount, ok := cfg.fixedWindowCounterData[clientId]; ok {
+func (rl *InMemoryRateLimiter) getOrCreateClientFixedWindowCounter(clientId string) int {
+	rl.mu.Lock() // Allows Concurrent Reads
+	defer rl.mu.Unlock()
+	if rqCount, ok := rl.fixedWindowCounterData[clientId]; ok {
 		return rqCount
 	}
-	cfg.fixedWindowCounterData[clientId] = 0
+	rl.fixedWindowCounterData[clientId] = 0
 	return 0
 }
 
-func (cfg *InMemoryRateLimiter) fixedWindowCounter(clientId string) (shared.ResponseHeaders, error) {
-	rqCount := cfg.getOrCreateClientFixedWindowCounter(clientId)
-	if cfg.maxAllowedRequests == 0 || rqCount >= cfg.maxAllowedRequests {
-		return shared.ResponseHeaders{
-			XRatelimitLimit:     shared.Blocked,
-			XRatelimitRemaining: 0,
-			XRatelimitReset:     cfg.windowEnd,
-		}, nil
+func (rl *InMemoryRateLimiter) fixedWindowCounter(clientId string) (shared.ResponseHeaders, error) {
+	rqCount := rl.getOrCreateClientFixedWindowCounter(clientId)
+	if rqCount >= rl.maxAllowedRequests {
+		return rl.getBlockedResponseHeaders(), nil
 	}
 
-	remaining := cfg.maxAllowedRequests - rqCount
-	cfg.mu.Lock()
-	cfg.fixedWindowCounterData[clientId] = rqCount + 1
-	cfg.mu.Unlock()
+	remaining := rl.maxAllowedRequests - rqCount
+	rl.mu.Lock()
+	rl.fixedWindowCounterData[clientId] = rqCount + 1
+	rl.mu.Unlock()
 	return shared.ResponseHeaders{
 		XRatelimitLimit:     shared.Allowed,
 		XRatelimitRemaining: remaining,
-		XRatelimitReset:     cfg.windowEnd,
+		XRatelimitReset:     rl.windowEnd,
 	}, nil
 }
-func (cfg *InMemoryRateLimiter) fixedWindowPurge() {
+func (rl *InMemoryRateLimiter) fixedWindowPurge() {
 	curTime := time.Now()
-	cfg.windowStart = curTime
-	cfg.windowEnd = curTime.Add(cfg.timeWindow)
-	cfg.mu.Lock()
-	defer cfg.mu.Unlock()
-	for i := range cfg.fixedWindowCounterData {
-		cfg.fixedWindowCounterData[i] = 0
+	rl.windowStart = curTime
+	rl.windowEnd = curTime.Add(rl.timeWindow)
+	rl.mu.Lock()
+	defer rl.mu.Unlock()
+	for i := range rl.fixedWindowCounterData {
+		rl.fixedWindowCounterData[i] = 0
 	}
 }
-func (cfg *InMemoryRateLimiter) fixedWindowCleanup() {
-	ticker := time.NewTicker(cfg.timeWindow)
+func (rl *InMemoryRateLimiter) fixedWindowCleanup() {
+	ticker := time.NewTicker(rl.timeWindow)
 	for {
 		select {
 		case <-ticker.C:
-			cfg.fixedWindowPurge()
-		case <-cfg.ctx.Done():
+			rl.fixedWindowPurge()
+		case <-rl.ctx.Done():
 			return
 		}
 	}

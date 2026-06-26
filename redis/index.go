@@ -24,7 +24,7 @@ func (cfg *RedisRateLimiter) Limit(next http.Handler) http.Handler {
 		//TODO: Ratelimiting process in Redis
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusNotImplemented)
-		_ = json.NewEncoder(w).Encode(shared.ResponseHeaders{
+		_ = json.NewEncoder(w).Encode(shared.ErrorResponseBody{
 			Type:   "Configuration Error",
 			Title:  http.StatusText(http.StatusNotImplemented),
 			Detail: "Redis backend for rate limiter not implemented yet",

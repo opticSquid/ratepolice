@@ -52,14 +52,16 @@ const (
 
 // RFC 9457 ProblemDetails object extended ResponseHeaders Object
 type ResponseHeaders struct {
-	Type                 string        `json:"type,omitempty"`
-	Title                string        `json:"title"`
-	Detail               string        `json:"detail"`
-	Instance             string        `json:"instance,omitempty"`
 	XRatelimitLimit      Verdict       `json:"X-RateLimit-Limit"`
 	XRatelimitRemaining  int           `json:"X-RateLimit-Remaining"`
 	XRatelimitReset      time.Time     `json:"X-RateLimit-Reset"`
 	XRatelimitRetryAfter time.Duration `json:"X-RateLimit-Retry-After"`
+}
+type ErrorResponseBody struct {
+	Type     string `json:"type,omitempty"`
+	Title    string `json:"title"`
+	Detail   string `json:"detail"`
+	Instance string `json:"instance,omitempty"`
 }
 
 type RatePolice interface {
