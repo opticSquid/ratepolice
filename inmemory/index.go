@@ -24,6 +24,10 @@ func NewInMemoryRateLimiter(cfg shared.Config) *InMemoryRateLimiter {
 		ctx:                ctx,
 		cnclFunc:           cncl,
 	}
+	switch rl.algorithm {
+	case shared.FixedWindowCounter:
+		rl.fixedWindowCounterData = make(map[string]int)
+	}
 	if rl.timeWindow > 0 {
 		switch rl.algorithm {
 		case shared.FixedWindowCounter:

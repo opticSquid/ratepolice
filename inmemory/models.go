@@ -10,15 +10,16 @@ import (
 )
 
 type InMemoryRateLimiter struct {
-	algorithm          shared.Algorithm
-	maxAllowedRequests int64
-	keyFunc            func(*http.Request) string
-	timeWindow         time.Duration
-	coolDownDur        time.Duration
-	coolDownMultiplier int
-	mu                 sync.Mutex
-	windowStart        time.Time
-	windowEnd          time.Time
-	ctx                context.Context
-	cnclFunc           context.CancelFunc
+	algorithm              shared.Algorithm
+	maxAllowedRequests     int
+	keyFunc                func(*http.Request) string
+	timeWindow             time.Duration
+	coolDownDur            time.Duration
+	coolDownMultiplier     int
+	mu                     sync.Mutex
+	windowStart            time.Time
+	windowEnd              time.Time
+	ctx                    context.Context
+	cnclFunc               context.CancelFunc
+	fixedWindowCounterData map[string]int
 }

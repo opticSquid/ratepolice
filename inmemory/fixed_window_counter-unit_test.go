@@ -35,7 +35,7 @@ func Test_InMemoryRateLimiter_Single_Client_Within_Limit(t *testing.T) {
 		if res.XRatelimitLimit != shared.Allowed {
 			t.Errorf("expected allowed, got %s, rq no: %d", res.XRatelimitLimit, i)
 		}
-		if res.XRatelimitRemaining != int64(5-i) {
+		if res.XRatelimitRemaining != 5-i {
 			t.Errorf("expected remaining %d, got %d, rq no: %d", 5-i, res.XRatelimitRemaining, i)
 		}
 	}
@@ -53,7 +53,7 @@ func Test_InMemoryRateLimiter_Single_Client_Exceeding_Limit(t *testing.T) {
 		if res.XRatelimitLimit != shared.Allowed {
 			t.Errorf("expected allowed, got %s, rq no: %d", res.XRatelimitLimit, i)
 		}
-		if res.XRatelimitRemaining != int64(5-i) {
+		if res.XRatelimitRemaining != 5-i {
 			t.Errorf("expected remaining %d, got %d, rq no: %d", 5-i, res.XRatelimitRemaining, i)
 		}
 	}
@@ -103,7 +103,7 @@ func Test_InMemoryRateLimiter_Multiple_Clients_Within_Limit_Mixed_Sequence(t *te
 						cid, res.XRatelimitLimit, i)
 				}
 
-				expectedRemaining := int64(config.MaxAllowedRequests) - int64(i)
+				expectedRemaining := config.MaxAllowedRequests - i
 				if res.XRatelimitRemaining != expectedRemaining {
 					t.Errorf("client %s: expected remaining %d, got %d",
 						cid, expectedRemaining, res.XRatelimitRemaining)

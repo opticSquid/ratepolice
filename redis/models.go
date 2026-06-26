@@ -9,7 +9,7 @@ import (
 
 type RedisRateLimiter struct {
 	algorithm          shared.Algorithm
-	allowedRequests    int64
+	allowedRequests    int
 	keyFunc            func(*http.Request) string
 	timeWindow         time.Duration
 	coolDownDur        time.Duration

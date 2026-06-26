@@ -26,7 +26,7 @@ const (
 
 type Config struct {
 	//Maximum number of allowed requests per client with in the time window
-	MaxAllowedRequests int64
+	MaxAllowedRequests int
 	// The function to uniquely identify a client given a request
 	KeyFunc func(*http.Request) string
 	// The time window for rate limiting
@@ -57,7 +57,7 @@ type ResponseHeaders struct {
 	Detail               string        `json:"detail"`
 	Instance             string        `json:"instance,omitempty"`
 	XRatelimitLimit      Verdict       `json:"X-RateLimit-Limit"`
-	XRatelimitRemaining  int64         `json:"X-RateLimit-Remaining"`
+	XRatelimitRemaining  int           `json:"X-RateLimit-Remaining"`
 	XRatelimitReset      time.Time     `json:"X-RateLimit-Reset"`
 	XRatelimitRetryAfter time.Duration `json:"X-RateLimit-Retry-After"`
 }
