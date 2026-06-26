@@ -7,7 +7,7 @@ import (
 	"github.com/opticSquid/ratepolice/shared"
 )
 
-func NewRedisRateLimiter(cfg shared.Config) *RedisRateLimiter {
+func NewRedisRateLimiter(cfg shared.Config) (*RedisRateLimiter, error) {
 	return &RedisRateLimiter{
 		algorithm:          cfg.Algorithm,
 		allowedRequests:    cfg.MaxAllowedRequests,
@@ -16,7 +16,7 @@ func NewRedisRateLimiter(cfg shared.Config) *RedisRateLimiter {
 		coolDownDur:        cfg.CoolDownDur,
 		coolDownMultiplier: cfg.CoolDownMultiplier,
 		redisConn:          cfg.RedisConn,
-	}
+	}, nil
 }
 
 func (cfg *RedisRateLimiter) Limit(next http.Handler) http.Handler {
